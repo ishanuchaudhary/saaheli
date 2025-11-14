@@ -109,93 +109,112 @@ const cartTotalDisplay = document.getElementById('cartTotal');
 // Product data - will be loaded from products.js
 let products = [];
 
-// Function to initialize cart and wishlist buttons after products are loaded
+// Use event delegation on productGrid for better reliability with dynamically loaded content
+const productGrid = document.getElementById('productGrid');
+
+// Flag to ensure event listener is only added once
+let buttonsInitialized = false;
+
+// Initialize product buttons using event delegation (works with dynamically added elements)
 function initializeProductButtons() {
-  const addToCartButtons = document.querySelectorAll('.btn-cart');
-  const wishlistButtons = document.querySelectorAll('.btn-wishlist');
-  
   // Get products from products.js
   if (typeof window.getProducts === 'function') {
     products = window.getProducts();
   }
   
-  // Add to cart event listeners
-  addToCartButtons.forEach((button) => {
-    // Remove existing listeners by cloning
-    const newButton = button.cloneNode(true);
-    button.parentNode.replaceChild(newButton, button);
+  // Event delegation for cart buttons - attach to productGrid container (only once)
+  if (productGrid && !buttonsInitialized) {
+    buttonsInitialized = true;
     
-    newButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const productId = parseInt(newButton.getAttribute('data-product-id'));
-      const product = products.find(p => p.id === productId);
-      
-      if (product) {
-        addToCart(product);
+    // Handle cart button clicks
+    productGrid.addEventListener('click', (e) => {
+      const cartButton = e.target.closest('.btn-cart');
+      if (cartButton) {
+        e.preventDefault();
+        e.stopPropagation();
         
-        // Add animation effect
-        newButton.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-          newButton.style.transform = 'scale(1)';
-        }, 200);
+        const productId = parseInt(cartButton.getAttribute('data-product-id'));
+        const product = products.find(p => p.id === productId);
+        
+        if (product) {
+          addToCart(product);
+          
+          // Add animation effect
+          cartButton.style.transform = 'scale(0.9)';
+          setTimeout(() => {
+            cartButton.style.transform = 'scale(1)';
+          }, 200);
 
-        // Show notification
-        showNotification('Item added to cart!');
-      }
-    });
-  });
-  
-  // Wishlist event listeners
-  wishlistButtons.forEach((button) => {
-    // Remove existing listeners by cloning
-    const newButton = button.cloneNode(true);
-    button.parentNode.replaceChild(newButton, button);
-    
-    newButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const productId = parseInt(newButton.getAttribute('data-product-id'));
-      const product = products.find(p => p.id === productId);
-      
-      if (product) {
-        const isWishlisted = wishlist.find(item => item.id === product.id);
-        
-        if (isWishlisted) {
-          removeFromWishlist(product.id);
-          const icon = newButton.querySelector('ion-icon');
-          if (icon) {
-            icon.setAttribute('name', 'heart-outline');
-          }
-          newButton.style.color = '';
-          showNotification('Removed from wishlist!');
-        } else {
-          addToWishlist(product);
-          const icon = newButton.querySelector('ion-icon');
-          if (icon) {
-            icon.setAttribute('name', 'heart');
-          }
-          newButton.style.color = '#ff6b6b';
-          showNotification('Added to wishlist!');
+          // Show notification
+          showNotification('Item added to cart!');
         }
+      }
+      
+      // Handle wishlist button clicks
+      const wishlistButton = e.target.closest('.btn-wishlist');
+      if (wishlistButton) {
+        e.preventDefault();
+        e.stopPropagation();
         
-        // Animation
-        newButton.style.transform = 'scale(1.2)';
-        setTimeout(() => {
-          newButton.style.transform = 'scale(1)';
-        }, 200);
+        const productId = parseInt(wishlistButton.getAttribute('data-product-id'));
+        const product = products.find(p => p.id === productId);
+        
+        if (product) {
+          const isWishlisted = wishlist.find(item => item.id === product.id);
+          
+          if (isWishlisted) {
+            removeFromWishlist(product.id);
+            const icon = wishlistButton.querySelector('ion-icon');
+            if (icon) {
+              icon.setAttribute('name', 'heart-outline');
+            }
+            wishlistButton.style.color = '';
+            showNotification('Removed from wishlist!');
+          } else {
+            addToWishlist(product);
+            const icon = wishlistButton.querySelector('ion-icon');
+            if (icon) {
+              icon.setAttribute('name', 'heart');
+            }
+            wishlistButton.style.color = '#ff6b6b';
+            showNotification('Added to wishlist!');
+          }
+          
+          // Animation
+          wishlistButton.style.transform = 'scale(1.2)';
+          setTimeout(() => {
+            wishlistButton.style.transform = 'scale(1)';
+          }, 200);
+        }
       }
     });
-  });
+  }
 }
 
-// Wait for products to be loaded
+// Initialize immediately when script loads (event delegation works even if products aren't loaded yet)
+function setupButtonListeners() {
+  // Make sure productGrid exists before initializing
+  const grid = document.getElementById('productGrid');
+  if (grid) {
+    initializeProductButtons();
+  } else {
+    // Retry after a short delay if productGrid doesn't exist yet
+    setTimeout(setupButtonListeners, 50);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupButtonListeners);
+} else {
+  setupButtonListeners();
+}
+
+// Also update products array when products are loaded
 window.addEventListener('productsRendered', () => {
-  initializeProductButtons();
+  if (typeof window.getProducts === 'function') {
+    products = window.getProducts();
+  }
 });
-
-// Also try to initialize if products are already loaded
-if (document.readyState === 'complete') {
-  setTimeout(initializeProductButtons, 100);
-}
 
 function addToCart(product) {
   const existingItem = cart.find(item => item.id === product.id);
