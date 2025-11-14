@@ -343,11 +343,6 @@ button {
   align-items: center;
 }
 
-.hero-text {
-  /* Animation is handled by .fade-in-up class */
-  /* No need to override - let the fade-in-up animation work */
-}
-
 .eyebrow {
   color: var(--color-primary);
   text-transform: uppercase;
@@ -628,7 +623,7 @@ button {
   width: 100%;
 }
 
-.instagram-link {
+.contact-link {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -636,21 +631,21 @@ button {
   transition: all var(--transition-1);
 }
 
-.instagram-link ion-icon {
+.contact-link ion-icon {
   font-size: 2rem;
   transition: all var(--transition-1);
 }
 
-.instagram-link:hover {
+.contact-link:hover {
   color: #E4405F;
   transform: translateY(-2px);
 }
 
-.instagram-link:hover ion-icon {
+.contact-link:hover ion-icon {
   transform: scale(1.2);
 }
 
-.instagram-link::after {
+.contact-link::after {
   display: none;
 }
 
