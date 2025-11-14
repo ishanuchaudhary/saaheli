@@ -58,12 +58,8 @@ function renderProducts() {
       <div class="card-image-wrapper">
         <img src="${imagePath}" alt="${product.name}" class="card-img">
         <div class="card-overlay">
-          <button class="btn-cart" aria-label="Add to cart" data-product-id="${product.id}">
-            <ion-icon name="bag-handle-outline"></ion-icon>
-            Add to Cart
-          </button>
-          <button class="btn-wishlist" aria-label="Add to wishlist" data-product-id="${product.id}">
-            <ion-icon name="heart-outline"></ion-icon>
+          <button class="btn-enquire" aria-label="Enquire about product" data-product-id="${product.id}" data-product-name="${product.name}">
+            Enquire?
           </button>
         </div>
       </div>

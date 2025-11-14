@@ -56,16 +56,6 @@
         <a href="#about" class="nav-link">About</a>
         <a href="https://www.instagram.com/saaheli.in/" target="_blank" rel="noopener noreferrer" class="nav-link">Contact</a>
       </nav>
-      <div class="header-actions">
-        <button class="wishlist-btn" aria-label="Wishlist">
-          <ion-icon name="heart-outline"></ion-icon>
-          <span class="wishlist-count">0</span>
-        </button>
-        <button class="cart-btn" aria-label="Shopping cart">
-          <ion-icon name="bag-handle-outline"></ion-icon>
-          <span class="cart-count">0</span>
-        </button>
-      </div>
     </div>
   </header>
 
@@ -133,45 +123,6 @@
     <ion-icon name="arrow-up"></ion-icon>
   </button>
 
-  <!-------- Cart Modal -------->
-  <div class="modal-overlay" id="cartModal">
-    <div class="modal-card cart-modal">
-      <div class="modal-header">
-        <h2>Shopping Cart</h2>
-        <button class="modal-close" aria-label="Close cart">
-          <ion-icon name="close-outline"></ion-icon>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="cart-items" id="cartItems">
-          <p class="empty-message">Your cart is empty</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="cart-total">
-          <span>Total: <strong id="cartTotal">₹0.00</strong></span>
-        </div>
-        <button class="btn-checkout">Checkout</button>
-      </div>
-    </div>
-  </div>
-
-  <!-------- Wishlist Modal -------->
-  <div class="modal-overlay" id="wishlistModal">
-    <div class="modal-card wishlist-modal">
-      <div class="modal-header">
-        <h2>Wishlist</h2>
-        <button class="modal-close" aria-label="Close wishlist">
-          <ion-icon name="close-outline"></ion-icon>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="wishlist-items" id="wishlistItems">
-          <p class="empty-message">Your wishlist is empty</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-------- Custom JS links -------->
   <script src="/assets/js/products.js" defer></script>

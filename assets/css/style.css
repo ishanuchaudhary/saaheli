@@ -294,51 +294,6 @@ button {
   width: 100%;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.wishlist-btn,
-.cart-btn {
-  position: relative;
-  color: var(--color-secondary);
-  font-size: 2.4rem;
-  transition: all var(--transition-1);
-  padding: 8px;
-  border-radius: var(--radius-6);
-}
-
-.wishlist-btn:hover,
-.cart-btn:hover {
-  color: var(--color-accent);
-  transform: scale(1.1);
-}
-
-.wishlist-count,
-.cart-count {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: var(--color-accent);
-  color: var(--color-primary);
-  font-size: 1rem;
-  font-weight: var(--fw-700);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: scale(0);
-  transition: transform var(--transition-1);
-}
-
-.wishlist-count.active,
-.cart-count.active {
-  transform: scale(1);
-}
 
 /* ------ HERO ------ */
 .hero {
@@ -520,31 +475,27 @@ button {
   opacity: 1;
 }
 
-.btn-cart,
-.btn-wishlist {
+.btn-enquire {
   background: var(--color-secondary);
   color: var(--color-primary);
-  padding: 12px 20px;
+  padding: 12px 30px;
   border-radius: var(--radius-6);
   font-weight: var(--fw-600);
-  font-size: var(--fs-8);
+  font-size: var(--fs-7);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   transition: all var(--transition-1);
   border: 2px solid var(--color-secondary);
+  cursor: pointer;
 }
 
-.btn-cart:hover,
-.btn-wishlist:hover {
+.btn-enquire:hover {
   background: var(--color-accent);
   border-color: var(--color-accent);
   transform: scale(1.05);
-}
-
-.btn-wishlist {
-  padding: 12px;
-  font-size: 2rem;
+  color: var(--color-primary);
 }
 
 .card-content {
@@ -951,8 +902,7 @@ button {
 }
 
 .theme-jewelry .site-header .brand,
-.theme-jewelry .site-header .site-nav a,
-.theme-jewelry .site-header .cart-btn {
+.theme-jewelry .site-header .site-nav a {
   color: var(--color-secondary);
 }
 
@@ -1153,7 +1103,7 @@ button {
     padding: 15px;
   }
 
-  .btn-cart {
+  .btn-enquire {
     width: 100%;
     justify-content: center;
   }

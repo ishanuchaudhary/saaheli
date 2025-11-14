@@ -160,12 +160,7 @@ function initScrollReveal() {
   init();
 })();
 
-// ===== CART FUNCTIONALITY =====
-let cart = [];
-let wishlist = [];
-let cartBtn, wishlistBtn, cartCountDisplay, wishlistCountDisplay;
-let cartModal, wishlistModal, cartItemsContainer, wishlistItemsContainer, cartTotalDisplay;
-
+// ===== ENQUIRE FUNCTIONALITY =====
 // Product data - will be loaded from products.js
 let products = [];
 
@@ -182,142 +177,59 @@ function initializeProductButtons() {
     products = window.getProducts();
   }
   
-  // Event delegation for cart buttons - attach to productGrid container (only once)
+  // Event delegation for enquire buttons - attach to productGrid container (only once)
   if (productGrid && !buttonsInitialized) {
     buttonsInitialized = true;
     console.log('Product buttons initialized');
     
     // Handle all clicks within productGrid
     productGrid.addEventListener('click', (e) => {
-      // Check if click is on cart button or its children (icon/text)
-      const cartButton = e.target.closest('.btn-cart');
-      if (cartButton) {
+      // Check if click is on enquire button
+      const enquireButton = e.target.closest('.btn-enquire');
+      if (enquireButton) {
         e.preventDefault();
         e.stopPropagation();
         
-        const productId = parseInt(cartButton.getAttribute('data-product-id'));
-        console.log('Cart button clicked, product ID:', productId);
+        const productName = enquireButton.getAttribute('data-product-name');
+        const productId = enquireButton.getAttribute('data-product-id');
         
-        // Always get fresh products from products.js
+        // Format message
+        let message = `Hi! I would like to enquire about: ${productName}`;
+        
+        // Get product details if available
         if (typeof window.getProducts === 'function') {
-          const freshProducts = window.getProducts();
-          if (freshProducts && freshProducts.length > 0) {
-            products = freshProducts;
+          const allProducts = window.getProducts();
+          const product = allProducts.find(p => p.id == productId);
+          if (product) {
+            message = `Hi! I would like to enquire about:\n\n${product.name} - ₹${product.price.toFixed(2)}\n\nPlease let me know about availability and delivery options.`;
           }
         }
         
-        // If products still empty, wait a bit and retry
-        if (products.length === 0) {
-          setTimeout(() => {
-            if (typeof window.getProducts === 'function') {
-              products = window.getProducts();
-              const product = products.find(p => p.id === productId);
-              if (product) {
-                addToCart(product);
-                showNotification('Item added to cart!');
-              }
-            }
-          }, 100);
-          return;
-        }
+        // Format Instagram URL
+        const instagramUsername = 'saaheli.in';
+        const instagramUrl = `https://www.instagram.com/${instagramUsername}/`;
         
-        const product = products.find(p => p.id === productId);
-        
-        if (product) {
-          console.log('Adding product to cart:', product);
-          addToCart(product);
-          
-          // Add animation effect
-          cartButton.style.transform = 'scale(0.9)';
-          setTimeout(() => {
-            cartButton.style.transform = 'scale(1)';
-          }, 200);
-
-          // Show notification
-          showNotification('Item added to cart!');
+        // Copy message to clipboard
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(message).then(() => {
+            showNotification('Message copied! Opening Instagram...');
+            setTimeout(() => {
+              window.open(instagramUrl, '_blank');
+            }, 300);
+          }).catch(() => {
+            showNotification('Opening Instagram...');
+            window.open(instagramUrl, '_blank');
+          });
         } else {
-          console.error('Product not found for ID:', productId, 'Available products:', products);
-        }
-        return; // Exit early to avoid processing wishlist
-      }
-      
-      // Check if click is on wishlist button or its children (icon)
-      const wishlistButton = e.target.closest('.btn-wishlist');
-      if (wishlistButton) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const productId = parseInt(wishlistButton.getAttribute('data-product-id'));
-        console.log('Wishlist button clicked, product ID:', productId);
-        
-        // Always get fresh products from products.js
-        if (typeof window.getProducts === 'function') {
-          const freshProducts = window.getProducts();
-          if (freshProducts && freshProducts.length > 0) {
-            products = freshProducts;
-          }
+          alert('Please copy this message and send it via Instagram DM:\n\n' + message);
+          window.open(instagramUrl, '_blank');
         }
         
-        // If products still empty, wait a bit and retry
-        if (products.length === 0) {
-          setTimeout(() => {
-            if (typeof window.getProducts === 'function') {
-              products = window.getProducts();
-              const product = products.find(p => p.id === productId);
-              if (product) {
-                const isWishlisted = wishlist.find(item => item.id === product.id);
-                if (isWishlisted) {
-                  removeFromWishlist(product.id);
-                  const icon = wishlistButton.querySelector('ion-icon');
-                  if (icon) icon.setAttribute('name', 'heart-outline');
-                  wishlistButton.style.color = '';
-                  showNotification('Removed from wishlist!');
-                } else {
-                  addToWishlist(product);
-                  const icon = wishlistButton.querySelector('ion-icon');
-                  if (icon) icon.setAttribute('name', 'heart');
-                  wishlistButton.style.color = '#ff6b6b';
-                  showNotification('Added to wishlist!');
-                }
-              }
-            }
-          }, 100);
-          return;
-        }
-        
-        const product = products.find(p => p.id === productId);
-        
-        if (product) {
-          const isWishlisted = wishlist.find(item => item.id === product.id);
-          
-          if (isWishlisted) {
-            console.log('Removing from wishlist:', product);
-            removeFromWishlist(product.id);
-            const icon = wishlistButton.querySelector('ion-icon');
-            if (icon) {
-              icon.setAttribute('name', 'heart-outline');
-            }
-            wishlistButton.style.color = '';
-            showNotification('Removed from wishlist!');
-          } else {
-            console.log('Adding to wishlist:', product);
-            addToWishlist(product);
-            const icon = wishlistButton.querySelector('ion-icon');
-            if (icon) {
-              icon.setAttribute('name', 'heart');
-            }
-            wishlistButton.style.color = '#ff6b6b';
-            showNotification('Added to wishlist!');
-          }
-          
-          // Animation
-          wishlistButton.style.transform = 'scale(1.2)';
-          setTimeout(() => {
-            wishlistButton.style.transform = 'scale(1)';
-          }, 200);
-        } else {
-          console.error('Product not found for ID:', productId, 'Available products:', products);
-        }
+        // Add animation effect
+        enquireButton.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+          enquireButton.style.transform = 'scale(1)';
+        }, 200);
       }
     });
   } else if (!productGrid) {
@@ -411,326 +323,6 @@ window.addEventListener('productsRendered', () => {
   }
 });
 
-function addToCart(product) {
-  const existingItem = cart.find(item => item.id === product.id);
-  if (existingItem) {
-    existingItem.quantity++;
-  } else {
-    cart.push({ ...product, quantity: 1 });
-  }
-  updateCartDisplay();
-}
-
-function removeFromCart(productId) {
-  cart = cart.filter(item => item.id !== productId);
-  updateCartDisplay();
-  showNotification('Item removed from cart!');
-}
-
-function updateQuantity(productId, change) {
-  const item = cart.find(item => item.id === productId);
-  if (item) {
-    item.quantity += change;
-    if (item.quantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-    updateCartDisplay();
-  }
-}
-
-function updateCartDisplay() {
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
-  if (cartCountDisplay) {
-    cartCountDisplay.textContent = cartCount;
-    if (cartCount > 0) {
-      cartCountDisplay.classList.add('active');
-    } else {
-      cartCountDisplay.classList.remove('active');
-    }
-  }
-  
-  if (cartTotalDisplay) {
-    cartTotalDisplay.textContent = `₹${total.toFixed(2)}`;
-  }
-  
-  renderCartItems();
-}
-
-function renderCartItems() {
-  if (!cartItemsContainer) return;
-  
-  if (cart.length === 0) {
-    cartItemsContainer.innerHTML = '<p class="empty-message">Your cart is empty</p>';
-    return;
-  }
-  
-  cartItemsContainer.innerHTML = cart.map(item => `
-    <div class="cart-item">
-      <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-      <div class="cart-item-details">
-        <h3 class="cart-item-title">${item.name}</h3>
-        <p class="cart-item-price">₹${item.price.toFixed(2)}</p>
-      </div>
-      <div class="cart-item-actions">
-        <div class="quantity-controls">
-          <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
-          <span class="quantity">${item.quantity}</span>
-          <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
-        </div>
-        <button class="remove-btn" onclick="removeFromCart(${item.id})" aria-label="Remove item">
-          <ion-icon name="trash-outline"></ion-icon>
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-// Make functions globally accessible
-window.updateQuantity = updateQuantity;
-window.removeFromCart = removeFromCart;
-
-// Initialize cart/wishlist elements
-function initCartWishlistElements() {
-  cartBtn = document.querySelector('.cart-btn');
-  wishlistBtn = document.querySelector('.wishlist-btn');
-  cartCountDisplay = document.querySelector('.cart-count');
-  wishlistCountDisplay = document.querySelector('.wishlist-count');
-  cartModal = document.getElementById('cartModal');
-  wishlistModal = document.getElementById('wishlistModal');
-  cartItemsContainer = document.getElementById('cartItems');
-  wishlistItemsContainer = document.getElementById('wishlistItems');
-  cartTotalDisplay = document.getElementById('cartTotal');
-  
-  // Cart button click - open modal
-  if (cartBtn && cartModal) {
-    cartBtn.addEventListener('click', () => {
-      openModal(cartModal);
-    });
-  }
-  
-  // Wishlist button click - open modal
-  if (wishlistBtn && wishlistModal) {
-    wishlistBtn.addEventListener('click', () => {
-      openModal(wishlistModal);
-    });
-  }
-}
-
-// Initialize when DOM is ready
-(function() {
-  function init() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initCartWishlistElements);
-    } else {
-      initCartWishlistElements();
-    }
-  }
-  init();
-})();
-
-// ===== WISHLIST FUNCTIONALITY =====
-// Event listeners are now initialized in initializeProductButtons()
-
-function addToWishlist(product) {
-  if (!wishlist.find(item => item.id === product.id)) {
-    wishlist.push(product);
-    updateWishlistDisplay();
-  }
-}
-
-function removeFromWishlist(productId) {
-  wishlist = wishlist.filter(item => item.id !== productId);
-  updateWishlistDisplay();
-  
-  // Update heart icon on product card
-  const wishlistBtn = document.querySelector(`.btn-wishlist[data-product-id="${productId}"]`);
-  if (wishlistBtn) {
-    const icon = wishlistBtn.querySelector('ion-icon');
-    if (icon) {
-      icon.setAttribute('name', 'heart-outline');
-    }
-    wishlistBtn.style.color = '';
-  }
-}
-
-function updateWishlistDisplay() {
-  const wishlistCount = wishlist.length;
-  
-  if (wishlistCountDisplay) {
-    wishlistCountDisplay.textContent = wishlistCount;
-    if (wishlistCount > 0) {
-      wishlistCountDisplay.classList.add('active');
-    } else {
-      wishlistCountDisplay.classList.remove('active');
-    }
-  }
-  
-  renderWishlistItems();
-}
-
-function renderWishlistItems() {
-  if (!wishlistItemsContainer) return;
-  
-  if (wishlist.length === 0) {
-    wishlistItemsContainer.innerHTML = '<p class="empty-message">Your wishlist is empty</p>';
-    return;
-  }
-  
-  wishlistItemsContainer.innerHTML = wishlist.map(item => `
-    <div class="wishlist-item">
-      <img src="${item.image}" alt="${item.name}" class="wishlist-item-image">
-      <div class="wishlist-item-details">
-        <h3 class="wishlist-item-title">${item.name}</h3>
-        <p class="wishlist-item-price">₹${item.price.toFixed(2)}</p>
-      </div>
-      <div class="cart-item-actions">
-        <button class="remove-btn" onclick="removeFromWishlist(${item.id})" aria-label="Remove item">
-          <ion-icon name="trash-outline"></ion-icon>
-        </button>
-        <button class="btn-cart" onclick="addToCartFromWishlist(${item.id})" style="padding: 8px 15px; font-size: 1.2rem;">
-          <ion-icon name="bag-handle-outline"></ion-icon>
-          Add to Cart
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function addToCartFromWishlist(productId) {
-  const product = products.find(p => p.id === productId);
-  if (product) {
-    addToCart(product);
-    showNotification('Item added to cart from wishlist!');
-  }
-}
-
-// Make function globally accessible
-window.removeFromWishlist = removeFromWishlist;
-window.addToCartFromWishlist = addToCartFromWishlist;
-
-
-// ===== MODAL FUNCTIONALITY =====
-function openModal(modal) {
-  if (modal) {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    
-    // Update cart/wishlist display when opening
-    if (modal === cartModal) {
-      updateCartDisplay();
-    } else if (modal === wishlistModal) {
-      updateWishlistDisplay();
-    }
-  }
-}
-
-function closeModal(modal) {
-  if (modal) {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-}
-
-// Initialize modal functionality
-function initModals() {
-  // Close modal when clicking overlay
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) {
-        closeModal(overlay);
-      }
-    });
-  });
-
-  // Close modal when clicking close button
-  document.querySelectorAll('.modal-close').forEach(closeBtn => {
-    closeBtn.addEventListener('click', () => {
-      const modal = closeBtn.closest('.modal-overlay');
-      closeModal(modal);
-    });
-  });
-
-  // Close modal on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-overlay.active').forEach(modal => {
-        closeModal(modal);
-      });
-    }
-  });
-
-  // Checkout button
-  const checkoutBtn = document.querySelector('.btn-checkout');
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', () => {
-    if (cart.length > 0) {
-      // Format cart items into message
-      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      let message = 'Hi! I would like to enquire about the following products:\n\n';
-      
-      cart.forEach((item, index) => {
-        message += `${index + 1}. ${item.name}`;
-        if (item.quantity > 1) {
-          message += ` (Qty: ${item.quantity})`;
-        }
-        message += ` - ₹${(item.price * item.quantity).toFixed(2)}\n`;
-      });
-      
-      message += `\nTotal: ₹${total.toFixed(2)}\n\nPlease let me know about availability and delivery options.`;
-      
-      // Format Instagram URL
-      const instagramUsername = 'saaheli.in';
-      const instagramUrl = `https://www.instagram.com/${instagramUsername}/`;
-      
-      // Copy message to clipboard
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(message).then(() => {
-          showNotification('Message copied! Opening Instagram...');
-          // Open Instagram after copying
-          setTimeout(() => {
-            window.open(instagramUrl, '_blank');
-          }, 300);
-        }).catch(() => {
-          // Clipboard failed, open Instagram anyway
-          showNotification('Opening Instagram...');
-          window.open(instagramUrl, '_blank');
-        });
-      } else {
-        // Fallback for older browsers - show message in alert
-        alert('Please copy this message and send it via Instagram DM:\n\n' + message);
-        window.open(instagramUrl, '_blank');
-      }
-      
-      // Show notification with instructions after a delay
-      setTimeout(() => {
-        showNotification('Paste the message in Instagram DM!');
-      }, 1500);
-      
-      // Clear cart after a delay
-      setTimeout(() => {
-        cart = [];
-        updateCartDisplay();
-        closeModal(cartModal);
-      }, 2000);
-    }
-    });
-  }
-}
-
-// Initialize modals when DOM is ready
-(function() {
-  function init() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initModals);
-    } else {
-      initModals();
-    }
-  }
-  init();
-})();
 
 // ===== NOTIFICATION SYSTEM =====
 function showNotification(message) {
