@@ -97,15 +97,22 @@ function initializeCardAnimations() {
   });
 }
 
-// Load products when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadProducts);
-} else {
-  loadProducts();
-}
-
-// Export products array for use in script.js
+// Export products array for use in script.js (define immediately)
 window.getProducts = function() {
   return products;
 };
+
+// Load products when DOM is ready
+function initProducts() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadProducts);
+  } else if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    loadProducts();
+  } else {
+    // Fallback
+    setTimeout(loadProducts, 100);
+  }
+}
+
+initProducts();
 

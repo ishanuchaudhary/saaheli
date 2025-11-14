@@ -8,13 +8,29 @@ function initNavToggle() {
   siteNav = document.querySelector('.site-nav');
   navLinks = document.querySelectorAll('.nav-link');
 
-  if (navToggle && siteNav) {
+  if (!navToggle || !siteNav) {
+    // Retry if elements not found yet (max 10 retries = 1 second)
+    if (typeof initNavToggle.retryCount === 'undefined') {
+      initNavToggle.retryCount = 0;
+    }
+    if (initNavToggle.retryCount < 10) {
+      initNavToggle.retryCount++;
+      setTimeout(initNavToggle, 100);
+    }
+    return;
+  }
+
+  // Only add listener once
+  if (!navToggle.dataset.listenerAdded) {
+    navToggle.dataset.listenerAdded = 'true';
     navToggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      navToggle.classList.toggle('active');
-      siteNav.classList.toggle('active');
-      document.body.style.overflow = siteNav.classList.contains('active') ? 'hidden' : '';
+      if (siteNav) {
+        navToggle.classList.toggle('active');
+        siteNav.classList.toggle('active');
+        document.body.style.overflow = siteNav.classList.contains('active') ? 'hidden' : '';
+      }
     });
   }
 
@@ -43,12 +59,17 @@ function initNavToggle() {
   });
 }
 
-// Initialize navigation toggle when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initNavToggle);
-} else {
-  initNavToggle();
+// Initialize navigation toggle - wait for DOM and scripts to be ready
+function initAll() {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(initNavToggle, 0);
+  } else {
+    document.addEventListener('DOMContentLoaded', initNavToggle);
+    window.addEventListener('load', initNavToggle);
+  }
 }
+
+initAll();
 
 // ===== SMOOTH SCROLLING =====
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -291,8 +312,14 @@ function setupButtonListeners() {
   if (grid) {
     initializeProductButtons();
   } else {
-    // Retry after a short delay if productGrid doesn't exist yet
-    setTimeout(setupButtonListeners, 50);
+    // Retry after a short delay if productGrid doesn't exist yet (max 20 retries)
+    if (typeof setupButtonListeners.retryCount === 'undefined') {
+      setupButtonListeners.retryCount = 0;
+    }
+    if (setupButtonListeners.retryCount < 20) {
+      setupButtonListeners.retryCount++;
+      setTimeout(setupButtonListeners, 50);
+    }
   }
 }
 
