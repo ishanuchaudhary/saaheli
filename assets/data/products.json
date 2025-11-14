@@ -15,6 +15,14 @@
       "price": 1000,
       "image": "/assets/uploads/1000073656.webp",
       "description": "Editable Description "
+    },
+    {
+      "featured": false,
+      "id": 3,
+      "name": "Hamper 3",
+      "price": 2499,
+      "image": "/assets/uploads/dottedi_high_tasters_hamper.png",
+      "description": "Special Anniversary Hamper"
     }
   ]
 }
