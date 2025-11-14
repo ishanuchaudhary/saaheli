@@ -7,6 +7,14 @@
       "price": 500,
       "image": "/assets/uploads/shopping.png",
       "description": "Editable Description"
+    },
+    {
+      "featured": false,
+      "id": 2,
+      "name": "Hamper 2",
+      "price": 1000,
+      "image": "/assets/uploads/1000073656.webp",
+      "description": "Editable Description "
     }
   ]
 }
