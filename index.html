@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saaheli - Premium Gift Hampers</title>
+
+  <!-------- Favicon -------->
+  <link rel="shortcut icon" href="./favicon.PNG" type="image/png">
+
+  <!-------- Custom CSS link -------->
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!-------- Google font links -------->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-------- Preload Images -------->
+  <link rel="preload" as="image" href="./assets/images/hero-banner-2.png">
+  <link rel="preload" as="image" href="./assets/images/product-01.jpg">
+  <link rel="preload" as="image" href="./assets/images/product-02.jpg">
+  <link rel="preload" as="image" href="./assets/images/product-03.jpg">
+
+</head>
+
+<body id="top" class="theme-jewelry">
+  <!-------- Header -------->
+  <header class="site-header">
+    <div class="container">
+      <a href="#top" class="brand">सहेली</a>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="site-nav">
+        <a href="#top" class="nav-link">Home</a>
+        <a href="#shop" class="nav-link">Collections</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="https://www.instagram.com/saaheli.in/" target="_blank" rel="noopener noreferrer" class="nav-link">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button class="wishlist-btn" aria-label="Wishlist">
+          <ion-icon name="heart-outline"></ion-icon>
+          <span class="wishlist-count">0</span>
+        </button>
+        <button class="cart-btn" aria-label="Shopping cart">
+          <ion-icon name="bag-handle-outline"></ion-icon>
+          <span class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-------- Hero Section -------->
+    <section class="hero section--light">
+      <div class="container hero-wrap">
+        <div class="hero-text fade-in-up">
+          <p class="eyebrow">Timeless Luxury</p>
+          <h1>Premium Gift Hampers for Every Occasion</h1>
+          <p class="subtext">Celebrate life's special moments with beautifully curated gift hampers filled with love and care.</p>
+          <a href="#shop" class="btn-primary">Explore Collection</a>
+        </div>
+        <div class="hero-media fade-in-right">
+          <img src="./assets/images/hero-banner-2.png" alt="Premium Gift Hampers" class="hero-img">
+        </div>
+      </div>
+    </section>
+
+    <!-------- Shop Section -------->
+    <section id="shop" class="shop">
+      <div class="container">
+        <h2 class="section-title fade-in">Signature Collections</h2>
+        <div class="grid" id="productGrid">
+          <!-- Products will be dynamically loaded here -->
+        </div>
+      </div>
+    </section>
+
+    <!-------- About Section -------->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="about-content fade-in">
+          <h2 class="section-title">About सहेली</h2>
+          <p class="about-text">We specialize in creating beautifully curated gift hampers that bring joy to every occasion. Each hamper is thoughtfully assembled with premium products, ensuring your gift is as special as the moment you're celebrating.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-------- Footer -------->
+  <footer class="site-footer" id="contact">
+    <div class="container footer-wrap">
+      <div class="footer-content">
+        <p>&copy; 2025 Saaheli. Crafted with care.</p>
+        <div class="footer-links">
+          <a href="#top">Home</a>
+          <a href="#shop">Shop</a>
+          <a href="#about">About</a>
+          <a href="https://www.instagram.com/saaheli.in/" target="_blank" rel="noopener noreferrer" class="instagram-link">
+            <ion-icon name="logo-instagram"></ion-icon>
+            Contact Us
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-------- Back to Top Button -------->
+  <button class="back-to-top" aria-label="Back to top">
+    <ion-icon name="arrow-up"></ion-icon>
+  </button>
+
+  <!-------- Cart Modal -------->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal-card cart-modal">
+      <div class="modal-header">
+        <h2>Shopping Cart</h2>
+        <button class="modal-close" aria-label="Close cart">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="cart-items" id="cartItems">
+          <p class="empty-message">Your cart is empty</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="cart-total">
+          <span>Total: <strong id="cartTotal">₹0.00</strong></span>
+        </div>
+        <button class="btn-checkout">Checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-------- Wishlist Modal -------->
+  <div class="modal-overlay" id="wishlistModal">
+    <div class="modal-card wishlist-modal">
+      <div class="modal-header">
+        <h2>Wishlist</h2>
+        <button class="modal-close" aria-label="Close wishlist">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="wishlist-items" id="wishlistItems">
+          <p class="empty-message">Your wishlist is empty</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-------- Custom JS links -------->
+  <script src="/assets/js/products.js" defer></script>
+  <script src="./assets/js/script.js" defer></script>
+
+  <!-------- Ionicon link -------->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>

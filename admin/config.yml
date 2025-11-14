@@ -1,0 +1,24 @@
+backend:
+  name: git-gateway
+  branch: main # Branch to update (optional; defaults to master)
+
+media_folder: assets/uploads # Media files will be stored in the repo under assets/uploads
+public_folder: /assets/uploads # The src attribute for uploaded media will begin with /assets/uploads
+
+collections:
+  - name: "products_json" # Collection for managing products.json
+    label: "Products"
+    files:
+      - label: "Products List"
+        name: "products"
+        file: "assets/data/products.json"
+        fields:
+          - {label: "Products", name: "products", widget: "list", fields:
+              - {label: "ID", name: "id", widget: "number", required: true}
+              - {label: "Name", name: "name", widget: "string", required: true}
+              - {label: "Price", name: "price", widget: "number", valueType: "float", required: true}
+              - {label: "Image", name: "image", widget: "image", allow_multiple: false, choose_url: false, required: true}
+              - {label: "Description", name: "description", widget: "text", required: false}
+              - {label: "Featured", name: "featured", widget: "boolean", default: false, required: false}
+            }
+
