@@ -59,92 +59,112 @@ function initNavToggle() {
   });
 }
 
-// Initialize navigation toggle - wait for DOM and scripts to be ready
-function initAll() {
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(initNavToggle, 0);
-  } else {
-    document.addEventListener('DOMContentLoaded', initNavToggle);
-    window.addEventListener('load', initNavToggle);
+// Initialize navigation toggle when DOM is ready
+(function() {
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initNavToggle);
+    } else {
+      // DOM already ready
+      initNavToggle();
+    }
   }
-}
-
-initAll();
+  init();
+})();
 
 // ===== SMOOTH SCROLLING =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    // Skip if it's an external link
-    if (this.hasAttribute('target') || this.getAttribute('href').startsWith('http')) {
-      return;
-    }
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      const headerOffset = 70;
-      const elementPosition = target.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+function initSmoothScrolling() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      // Skip if it's an external link
+      if (this.hasAttribute('target') || this.getAttribute('href').startsWith('http')) {
+        return;
+      }
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const headerOffset = 70;
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
   });
-});
+}
 
 // ===== HEADER STICKY EFFECT =====
-const siteHeader = document.querySelector('.site-header');
-let lastScroll = 0;
+function initHeaderSticky() {
+  const siteHeader = document.querySelector('.site-header');
+  if (!siteHeader) return;
+  
+  let lastScroll = 0;
 
-window.addEventListener('scroll', () => {
-  const currentScroll = window.pageYOffset;
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
 
-  if (currentScroll > 100) {
-    siteHeader.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
-  } else {
-    siteHeader.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-  }
+    if (currentScroll > 100) {
+      siteHeader.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
+    } else {
+      siteHeader.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+    }
 
-  lastScroll = currentScroll;
-});
+    lastScroll = currentScroll;
+  });
+}
 
 // ===== SCROLL REVEAL ANIMATION =====
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
-};
+function initScrollReveal() {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-      observer.unobserve(entry.target);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  // Observe all fade-in elements EXCEPT hero elements (they have their own CSS animations)
+  document.querySelectorAll('.fade-in, .fade-in-up, .fade-in-right').forEach(el => {
+    // Skip hero section elements - they have their own CSS animations that shouldn't be overridden
+    if (!el.closest('.hero')) {
+      observer.observe(el);
     }
   });
-}, observerOptions);
+}
 
-// Observe all fade-in elements EXCEPT hero elements (they have their own CSS animations)
-document.querySelectorAll('.fade-in, .fade-in-up, .fade-in-right').forEach(el => {
-  // Skip hero section elements - they have their own CSS animations that shouldn't be overridden
-  if (!el.closest('.hero')) {
-    observer.observe(el);
+// Initialize these when DOM is ready
+(function() {
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        initSmoothScrolling();
+        initHeaderSticky();
+        initScrollReveal();
+      });
+    } else {
+      initSmoothScrolling();
+      initHeaderSticky();
+      initScrollReveal();
+    }
   }
-});
+  init();
+})();
 
 // ===== CART FUNCTIONALITY =====
 let cart = [];
 let wishlist = [];
-const cartBtn = document.querySelector('.cart-btn');
-const wishlistBtn = document.querySelector('.wishlist-btn');
-const cartCountDisplay = document.querySelector('.cart-count');
-const wishlistCountDisplay = document.querySelector('.wishlist-count');
-const cartModal = document.getElementById('cartModal');
-const wishlistModal = document.getElementById('wishlistModal');
-const cartItemsContainer = document.getElementById('cartItems');
-const wishlistItemsContainer = document.getElementById('wishlistItems');
-const cartTotalDisplay = document.getElementById('cartTotal');
+let cartBtn, wishlistBtn, cartCountDisplay, wishlistCountDisplay;
+let cartModal, wishlistModal, cartItemsContainer, wishlistItemsContainer, cartTotalDisplay;
 
 // Product data - will be loaded from products.js
 let products = [];
@@ -371,11 +391,18 @@ function waitForProducts() {
   }
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', waitForProducts);
-} else {
-  waitForProducts();
-}
+// Initialize when DOM is ready
+(function() {
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', waitForProducts);
+    } else {
+      // DOM already ready
+      waitForProducts();
+    }
+  }
+  init();
+})();
 
 // Also update products array when products are loaded
 window.addEventListener('productsRendered', () => {
@@ -465,12 +492,44 @@ function renderCartItems() {
 window.updateQuantity = updateQuantity;
 window.removeFromCart = removeFromCart;
 
-// Cart button click - open modal
-if (cartBtn) {
-  cartBtn.addEventListener('click', () => {
-    openModal(cartModal);
-  });
+// Initialize cart/wishlist elements
+function initCartWishlistElements() {
+  cartBtn = document.querySelector('.cart-btn');
+  wishlistBtn = document.querySelector('.wishlist-btn');
+  cartCountDisplay = document.querySelector('.cart-count');
+  wishlistCountDisplay = document.querySelector('.wishlist-count');
+  cartModal = document.getElementById('cartModal');
+  wishlistModal = document.getElementById('wishlistModal');
+  cartItemsContainer = document.getElementById('cartItems');
+  wishlistItemsContainer = document.getElementById('wishlistItems');
+  cartTotalDisplay = document.getElementById('cartTotal');
+  
+  // Cart button click - open modal
+  if (cartBtn && cartModal) {
+    cartBtn.addEventListener('click', () => {
+      openModal(cartModal);
+    });
+  }
+  
+  // Wishlist button click - open modal
+  if (wishlistBtn && wishlistModal) {
+    wishlistBtn.addEventListener('click', () => {
+      openModal(wishlistModal);
+    });
+  }
 }
+
+// Initialize when DOM is ready
+(function() {
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCartWishlistElements);
+    } else {
+      initCartWishlistElements();
+    }
+  }
+  init();
+})();
 
 // ===== WISHLIST FUNCTIONALITY =====
 // Event listeners are now initialized in initializeProductButtons()
@@ -552,12 +611,6 @@ function addToCartFromWishlist(productId) {
 window.removeFromWishlist = removeFromWishlist;
 window.addToCartFromWishlist = addToCartFromWishlist;
 
-// Wishlist button click - open modal
-if (wishlistBtn) {
-  wishlistBtn.addEventListener('click', () => {
-    openModal(wishlistModal);
-  });
-}
 
 // ===== MODAL FUNCTIONALITY =====
 function openModal(modal) {
@@ -581,36 +634,38 @@ function closeModal(modal) {
   }
 }
 
-// Close modal when clicking overlay
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      closeModal(overlay);
-    }
+// Initialize modal functionality
+function initModals() {
+  // Close modal when clicking overlay
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeModal(overlay);
+      }
+    });
   });
-});
 
-// Close modal when clicking close button
-document.querySelectorAll('.modal-close').forEach(closeBtn => {
-  closeBtn.addEventListener('click', () => {
-    const modal = closeBtn.closest('.modal-overlay');
-    closeModal(modal);
-  });
-});
-
-// Close modal on Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+  // Close modal when clicking close button
+  document.querySelectorAll('.modal-close').forEach(closeBtn => {
+    closeBtn.addEventListener('click', () => {
+      const modal = closeBtn.closest('.modal-overlay');
       closeModal(modal);
     });
-  }
-});
+  });
 
-// Checkout button
-const checkoutBtn = document.querySelector('.btn-checkout');
-if (checkoutBtn) {
-  checkoutBtn.addEventListener('click', () => {
+  // Close modal on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+        closeModal(modal);
+      });
+    }
+  });
+
+  // Checkout button
+  const checkoutBtn = document.querySelector('.btn-checkout');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
     if (cart.length > 0) {
       // Format cart items into message
       const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -661,8 +716,21 @@ if (checkoutBtn) {
         closeModal(cartModal);
       }, 2000);
     }
-  });
+    });
+  }
 }
+
+// Initialize modals when DOM is ready
+(function() {
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initModals);
+    } else {
+      initModals();
+    }
+  }
+  init();
+})();
 
 // ===== NOTIFICATION SYSTEM =====
 function showNotification(message) {
@@ -720,17 +788,19 @@ style.textContent = `
 document.head.appendChild(style);
 
 // ===== BACK TO TOP BUTTON =====
-const backToTopBtn = document.querySelector('.back-to-top');
+function initBackToTop() {
+  const backToTopBtn = document.querySelector('.back-to-top');
+  
+  if (!backToTopBtn) return;
 
-window.addEventListener('scroll', () => {
-  if (window.pageYOffset > 300) {
-    backToTopBtn.classList.add('active');
-  } else {
-    backToTopBtn.classList.remove('active');
-  }
-});
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      backToTopBtn.classList.add('active');
+    } else {
+      backToTopBtn.classList.remove('active');
+    }
+  });
 
-if (backToTopBtn) {
   backToTopBtn.addEventListener('click', () => {
     window.scrollTo({
       top: 0,
@@ -738,6 +808,18 @@ if (backToTopBtn) {
     });
   });
 }
+
+// Initialize when DOM is ready
+(function() {
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBackToTop);
+    } else {
+      initBackToTop();
+    }
+  }
+  init();
+})();
 
 // ===== CARD HOVER EFFECTS =====
 const cards = document.querySelectorAll('.card');

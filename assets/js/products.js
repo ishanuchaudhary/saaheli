@@ -2,10 +2,18 @@
 
 // ===== PRODUCTS LOADING AND RENDERING =====
 let products = [];
-const productGrid = document.getElementById('productGrid');
+let productGrid = null;
 
 // Fetch products from JSON file
 async function loadProducts() {
+  // Get productGrid when function is called (DOM should be ready)
+  productGrid = document.getElementById('productGrid');
+  
+  if (!productGrid) {
+    console.error('Product grid not found');
+    return;
+  }
+  
   try {
     const response = await fetch('/assets/data/products.json');
     if (!response.ok) {
