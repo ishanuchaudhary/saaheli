@@ -3,7 +3,7 @@
     {
       "id": 1,
       "name": "Premium Gift Hamper",
-      "price": 189.00,
+      "price": 189,
       "image": "./assets/images/product-01.jpg",
       "description": "A beautifully curated premium gift hamper",
       "featured": false
@@ -11,7 +11,7 @@
     {
       "id": 2,
       "name": "Luxury Gift Hamper",
-      "price": 249.00,
+      "price": 249,
       "image": "./assets/images/product-02.jpg",
       "description": "An exquisite luxury gift hamper",
       "featured": false
@@ -19,11 +19,18 @@
     {
       "id": 3,
       "name": "Deluxe Gift Hamper",
-      "price": 129.00,
+      "price": 129,
       "image": "./assets/images/product-03.jpg",
       "description": "A delightful deluxe gift hamper",
       "featured": false
+    },
+    {
+      "featured": false,
+      "id": 1,
+      "name": "Hamper 1",
+      "price": 500,
+      "image": "/assets/uploads/shopping.png",
+      "description": "Editable Description"
     }
   ]
 }
-
