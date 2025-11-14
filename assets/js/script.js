@@ -162,7 +162,7 @@ function initScrollReveal() {
 
 // ===== ENQUIRE FUNCTIONALITY =====
 // Product data - will be loaded from products.js
-let products = [];
+let productList = [];
 
 // Flag to ensure event listener is only added once
 let buttonsInitialized = false;
@@ -174,7 +174,7 @@ function initializeProductButtons() {
   
   // Get products from products.js
   if (typeof window.getProducts === 'function') {
-    products = window.getProducts();
+    productList = window.getProducts();
   }
   
   // Event delegation for enquire buttons - attach to productGrid container (only once)
@@ -261,14 +261,14 @@ function waitForProducts() {
   if (typeof window.getProducts === 'function') {
     const loadedProducts = window.getProducts();
     if (loadedProducts && loadedProducts.length > 0) {
-      products = loadedProducts;
+      productList = loadedProducts;
       setupButtonListeners();
     } else {
       // Products not loaded yet, wait for the event but also set up listener as fallback
       setupButtonListeners(); // Set up listener anyway (event delegation works)
       window.addEventListener('productsRendered', () => {
         if (typeof window.getProducts === 'function') {
-          products = window.getProducts();
+          productList = window.getProducts();
         }
       }, { once: true });
     }
@@ -281,13 +281,13 @@ function waitForProducts() {
       if (typeof window.getProducts === 'function') {
         const loadedProducts = window.getProducts();
         if (loadedProducts && loadedProducts.length > 0) {
-          products = loadedProducts;
+          productList = loadedProducts;
           setupButtonListeners();
         } else {
           setupButtonListeners(); // Set up anyway
           window.addEventListener('productsRendered', () => {
             if (typeof window.getProducts === 'function') {
-              products = window.getProducts();
+              productList = window.getProducts();
             }
           }, { once: true });
         }
@@ -319,7 +319,7 @@ function waitForProducts() {
 // Also update products array when products are loaded
 window.addEventListener('productsRendered', () => {
   if (typeof window.getProducts === 'function') {
-    products = window.getProducts();
+    productList = window.getProducts();
   }
 });
 
@@ -518,4 +518,5 @@ const throttledScroll = throttle(() => {
 }, 100);
 
 window.addEventListener('scroll', throttledScroll);
+
 

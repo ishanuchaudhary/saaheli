@@ -58,9 +58,15 @@ function renderProducts() {
       <div class="card-image-wrapper">
         <img src="${imagePath}" alt="${product.name}" class="card-img">
         <div class="card-overlay">
-          <button class="btn-enquire" aria-label="Enquire about product" data-product-id="${product.id}" data-product-name="${product.name}">
+          <button
+            class="btn-enquire"
+            aria-label="Enquire about this product"
+            data-product-id="${product.id}"
+            data-product-name="${product.name}"
+          >
             Enquire?
           </button>
+
         </div>
       </div>
       <div class="card-content">
