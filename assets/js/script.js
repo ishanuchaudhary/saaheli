@@ -138,9 +138,27 @@ function initializeProductButtons() {
         const productId = parseInt(cartButton.getAttribute('data-product-id'));
         console.log('Cart button clicked, product ID:', productId);
         
-        // Make sure products are loaded
+        // Always get fresh products from products.js
         if (typeof window.getProducts === 'function') {
-          products = window.getProducts();
+          const freshProducts = window.getProducts();
+          if (freshProducts && freshProducts.length > 0) {
+            products = freshProducts;
+          }
+        }
+        
+        // If products still empty, wait a bit and retry
+        if (products.length === 0) {
+          setTimeout(() => {
+            if (typeof window.getProducts === 'function') {
+              products = window.getProducts();
+              const product = products.find(p => p.id === productId);
+              if (product) {
+                addToCart(product);
+                showNotification('Item added to cart!');
+              }
+            }
+          }, 100);
+          return;
         }
         
         const product = products.find(p => p.id === productId);
@@ -172,9 +190,39 @@ function initializeProductButtons() {
         const productId = parseInt(wishlistButton.getAttribute('data-product-id'));
         console.log('Wishlist button clicked, product ID:', productId);
         
-        // Make sure products are loaded
+        // Always get fresh products from products.js
         if (typeof window.getProducts === 'function') {
-          products = window.getProducts();
+          const freshProducts = window.getProducts();
+          if (freshProducts && freshProducts.length > 0) {
+            products = freshProducts;
+          }
+        }
+        
+        // If products still empty, wait a bit and retry
+        if (products.length === 0) {
+          setTimeout(() => {
+            if (typeof window.getProducts === 'function') {
+              products = window.getProducts();
+              const product = products.find(p => p.id === productId);
+              if (product) {
+                const isWishlisted = wishlist.find(item => item.id === product.id);
+                if (isWishlisted) {
+                  removeFromWishlist(product.id);
+                  const icon = wishlistButton.querySelector('ion-icon');
+                  if (icon) icon.setAttribute('name', 'heart-outline');
+                  wishlistButton.style.color = '';
+                  showNotification('Removed from wishlist!');
+                } else {
+                  addToWishlist(product);
+                  const icon = wishlistButton.querySelector('ion-icon');
+                  if (icon) icon.setAttribute('name', 'heart');
+                  wishlistButton.style.color = '#ff6b6b';
+                  showNotification('Added to wishlist!');
+                }
+              }
+            }
+          }, 100);
+          return;
         }
         
         const product = products.find(p => p.id === productId);
@@ -217,7 +265,7 @@ function initializeProductButtons() {
   }
 }
 
-// Initialize immediately when script loads (event delegation works even if products aren't loaded yet)
+// Initialize button listeners - wait for products to be rendered
 function setupButtonListeners() {
   // Make sure productGrid exists before initializing
   const grid = document.getElementById('productGrid');
@@ -229,10 +277,58 @@ function setupButtonListeners() {
   }
 }
 
+// Wait for products to be loaded and rendered before setting up listeners
+function waitForProducts() {
+  // Check if products.js has loaded and products are available
+  if (typeof window.getProducts === 'function') {
+    const loadedProducts = window.getProducts();
+    if (loadedProducts && loadedProducts.length > 0) {
+      products = loadedProducts;
+      setupButtonListeners();
+    } else {
+      // Products not loaded yet, wait for the event but also set up listener as fallback
+      setupButtonListeners(); // Set up listener anyway (event delegation works)
+      window.addEventListener('productsRendered', () => {
+        if (typeof window.getProducts === 'function') {
+          products = window.getProducts();
+        }
+      }, { once: true });
+    }
+  } else {
+    // products.js not loaded yet, wait a bit and retry
+    // But also set up listener as fallback in case products.js never loads
+    const maxRetries = 20; // Max 1 second of retries
+    let retryCount = 0;
+    const retry = () => {
+      if (typeof window.getProducts === 'function') {
+        const loadedProducts = window.getProducts();
+        if (loadedProducts && loadedProducts.length > 0) {
+          products = loadedProducts;
+          setupButtonListeners();
+        } else {
+          setupButtonListeners(); // Set up anyway
+          window.addEventListener('productsRendered', () => {
+            if (typeof window.getProducts === 'function') {
+              products = window.getProducts();
+            }
+          }, { once: true });
+        }
+      } else if (retryCount < maxRetries) {
+        retryCount++;
+        setTimeout(retry, 50);
+      } else {
+        // Max retries reached, set up listener anyway
+        setupButtonListeners();
+      }
+    };
+    retry();
+  }
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupButtonListeners);
+  document.addEventListener('DOMContentLoaded', waitForProducts);
 } else {
-  setupButtonListeners();
+  waitForProducts();
 }
 
 // Also update products array when products are loaded
@@ -470,12 +566,54 @@ const checkoutBtn = document.querySelector('.btn-checkout');
 if (checkoutBtn) {
   checkoutBtn.addEventListener('click', () => {
     if (cart.length > 0) {
-      showNotification('Thank you! Your order has been placed.');
-      cart = [];
-      updateCartDisplay();
+      // Format cart items into message
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      let message = 'Hi! I would like to enquire about the following products:\n\n';
+      
+      cart.forEach((item, index) => {
+        message += `${index + 1}. ${item.name}`;
+        if (item.quantity > 1) {
+          message += ` (Qty: ${item.quantity})`;
+        }
+        message += ` - ₹${(item.price * item.quantity).toFixed(2)}\n`;
+      });
+      
+      message += `\nTotal: ₹${total.toFixed(2)}\n\nPlease let me know about availability and delivery options.`;
+      
+      // Format Instagram URL
+      const instagramUsername = 'saaheli.in';
+      const instagramUrl = `https://www.instagram.com/${instagramUsername}/`;
+      
+      // Copy message to clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(message).then(() => {
+          showNotification('Message copied! Opening Instagram...');
+          // Open Instagram after copying
+          setTimeout(() => {
+            window.open(instagramUrl, '_blank');
+          }, 300);
+        }).catch(() => {
+          // Clipboard failed, open Instagram anyway
+          showNotification('Opening Instagram...');
+          window.open(instagramUrl, '_blank');
+        });
+      } else {
+        // Fallback for older browsers - show message in alert
+        alert('Please copy this message and send it via Instagram DM:\n\n' + message);
+        window.open(instagramUrl, '_blank');
+      }
+      
+      // Show notification with instructions after a delay
       setTimeout(() => {
-        closeModal(cartModal);
+        showNotification('Paste the message in Instagram DM!');
       }, 1500);
+      
+      // Clear cart after a delay
+      setTimeout(() => {
+        cart = [];
+        updateCartDisplay();
+        closeModal(cartModal);
+      }, 2000);
     }
   });
 }
