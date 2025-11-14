@@ -1,35 +1,54 @@
 'use strict';
 
 // ===== NAVBAR TOGGLE =====
-const navToggle = document.querySelector('.nav-toggle');
-const siteNav = document.querySelector('.site-nav');
-const navLinks = document.querySelectorAll('.nav-link');
+let navToggle, siteNav, navLinks;
 
-if (navToggle) {
-  navToggle.addEventListener('click', () => {
-    navToggle.classList.toggle('active');
-    siteNav.classList.toggle('active');
-    document.body.style.overflow = siteNav.classList.contains('active') ? 'hidden' : '';
+function initNavToggle() {
+  navToggle = document.querySelector('.nav-toggle');
+  siteNav = document.querySelector('.site-nav');
+  navLinks = document.querySelectorAll('.nav-link');
+
+  if (navToggle && siteNav) {
+    navToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      navToggle.classList.toggle('active');
+      siteNav.classList.toggle('active');
+      document.body.style.overflow = siteNav.classList.contains('active') ? 'hidden' : '';
+    });
+  }
+
+  // Close mobile menu when clicking on a link
+  if (navLinks && navLinks.length > 0) {
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (navToggle && siteNav) {
+          navToggle.classList.remove('active');
+          siteNav.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+  }
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (navToggle && siteNav) {
+      if (!siteNav.contains(e.target) && !navToggle.contains(e.target)) {
+        navToggle.classList.remove('active');
+        siteNav.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
   });
 }
 
-// Close mobile menu when clicking on a link
-navLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    navToggle.classList.remove('active');
-    siteNav.classList.remove('active');
-    document.body.style.overflow = '';
-  });
-});
-
-// Close mobile menu when clicking outside
-document.addEventListener('click', (e) => {
-  if (!siteNav.contains(e.target) && !navToggle.contains(e.target)) {
-    navToggle.classList.remove('active');
-    siteNav.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-});
+// Initialize navigation toggle when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initNavToggle);
+} else {
+  initNavToggle();
+}
 
 // ===== SMOOTH SCROLLING =====
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {

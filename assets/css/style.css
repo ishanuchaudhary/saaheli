@@ -223,6 +223,11 @@ button {
   width: 30px;
   height: 30px;
   z-index: 1001;
+  position: relative;
+  cursor: pointer;
+  padding: 5px;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-toggle span {
@@ -232,6 +237,15 @@ button {
   background: var(--color-secondary);
   border-radius: 2px;
   transition: all var(--transition-1);
+  pointer-events: none;
+}
+
+.nav-toggle:hover {
+  opacity: 0.8;
+}
+
+.nav-toggle:active {
+  transform: scale(0.95);
 }
 
 .nav-toggle.active span:nth-child(1) {
@@ -1058,7 +1072,24 @@ button {
   }
 
   .nav-toggle {
-    display: flex;
+    display: flex !important;
+    order: 1;
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .site-header .container {
+    position: relative;
+  }
+
+  .header-actions {
+    order: 3;
+  }
+
+  .brand {
+    order: 2;
   }
 
   .site-nav {
@@ -1074,6 +1105,9 @@ button {
     transition: transform var(--transition-2);
     box-shadow: var(--shadow-2);
     border-bottom: 1px solid var(--color-accent);
+    z-index: 1000;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
   }
 
   .site-nav.active {
