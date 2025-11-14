@@ -13,12 +13,37 @@ collections:
         name: "products"
         file: "assets/data/products.json"
         fields:
-          - {label: "Products", name: "products", widget: "list", fields:
-              - {label: "ID", name: "id", widget: "number", required: true}
-              - {label: "Name", name: "name", widget: "string", required: true}
-              - {label: "Price", name: "price", widget: "number", valueType: "float", required: true}
-              - {label: "Image", name: "image", widget: "image", allow_multiple: false, choose_url: false, required: true}
-              - {label: "Description", name: "description", widget: "text", required: false}
-              - {label: "Featured", name: "featured", widget: "boolean", default: false, required: false}
-            }
+          - label: "Products"
+            name: "products"
+            widget: "list"
+            label_singular: "Product"
+            fields:
+              - label: "ID"
+                name: "id"
+                widget: "number"
+                required: true
+              - label: "Name"
+                name: "name"
+                widget: "string"
+                required: true
+              - label: "Price"
+                name: "price"
+                widget: "number"
+                valueType: "float"
+                required: true
+              - label: "Image"
+                name: "image"
+                widget: "image"
+                allow_multiple: false
+                choose_url: false
+                required: true
+              - label: "Description"
+                name: "description"
+                widget: "text"
+                required: false
+              - label: "Featured"
+                name: "featured"
+                widget: "boolean"
+                default: false
+                required: false
 
