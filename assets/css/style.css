@@ -344,7 +344,8 @@ button {
 }
 
 .hero-text {
-  animation: fadeInUp 0.8s ease-out;
+  /* Animation is handled by .fade-in-up class */
+  /* No need to override - let the fade-in-up animation work */
 }
 
 .eyebrow {

@@ -85,9 +85,12 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, observerOptions);
 
-// Observe all fade-in elements
+// Observe all fade-in elements EXCEPT hero elements (they have their own CSS animations)
 document.querySelectorAll('.fade-in, .fade-in-up, .fade-in-right').forEach(el => {
-  observer.observe(el);
+  // Skip hero section elements - they have their own CSS animations that shouldn't be overridden
+  if (!el.closest('.hero')) {
+    observer.observe(el);
+  }
 });
 
 // ===== CART FUNCTIONALITY =====
