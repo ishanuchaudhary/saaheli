@@ -109,14 +109,14 @@ const cartTotalDisplay = document.getElementById('cartTotal');
 // Product data - will be loaded from products.js
 let products = [];
 
-// Use event delegation on productGrid for better reliability with dynamically loaded content
-const productGrid = document.getElementById('productGrid');
-
 // Flag to ensure event listener is only added once
 let buttonsInitialized = false;
 
 // Initialize product buttons using event delegation (works with dynamically added elements)
 function initializeProductButtons() {
+  // Get fresh reference to productGrid
+  const productGrid = document.getElementById('productGrid');
+  
   // Get products from products.js
   if (typeof window.getProducts === 'function') {
     products = window.getProducts();
@@ -125,18 +125,28 @@ function initializeProductButtons() {
   // Event delegation for cart buttons - attach to productGrid container (only once)
   if (productGrid && !buttonsInitialized) {
     buttonsInitialized = true;
+    console.log('Product buttons initialized');
     
-    // Handle cart button clicks
+    // Handle all clicks within productGrid
     productGrid.addEventListener('click', (e) => {
+      // Check if click is on cart button or its children (icon/text)
       const cartButton = e.target.closest('.btn-cart');
       if (cartButton) {
         e.preventDefault();
         e.stopPropagation();
         
         const productId = parseInt(cartButton.getAttribute('data-product-id'));
+        console.log('Cart button clicked, product ID:', productId);
+        
+        // Make sure products are loaded
+        if (typeof window.getProducts === 'function') {
+          products = window.getProducts();
+        }
+        
         const product = products.find(p => p.id === productId);
         
         if (product) {
+          console.log('Adding product to cart:', product);
           addToCart(product);
           
           // Add animation effect
@@ -147,22 +157,33 @@ function initializeProductButtons() {
 
           // Show notification
           showNotification('Item added to cart!');
+        } else {
+          console.error('Product not found for ID:', productId, 'Available products:', products);
         }
+        return; // Exit early to avoid processing wishlist
       }
       
-      // Handle wishlist button clicks
+      // Check if click is on wishlist button or its children (icon)
       const wishlistButton = e.target.closest('.btn-wishlist');
       if (wishlistButton) {
         e.preventDefault();
         e.stopPropagation();
         
         const productId = parseInt(wishlistButton.getAttribute('data-product-id'));
+        console.log('Wishlist button clicked, product ID:', productId);
+        
+        // Make sure products are loaded
+        if (typeof window.getProducts === 'function') {
+          products = window.getProducts();
+        }
+        
         const product = products.find(p => p.id === productId);
         
         if (product) {
           const isWishlisted = wishlist.find(item => item.id === product.id);
           
           if (isWishlisted) {
+            console.log('Removing from wishlist:', product);
             removeFromWishlist(product.id);
             const icon = wishlistButton.querySelector('ion-icon');
             if (icon) {
@@ -171,6 +192,7 @@ function initializeProductButtons() {
             wishlistButton.style.color = '';
             showNotification('Removed from wishlist!');
           } else {
+            console.log('Adding to wishlist:', product);
             addToWishlist(product);
             const icon = wishlistButton.querySelector('ion-icon');
             if (icon) {
@@ -185,9 +207,13 @@ function initializeProductButtons() {
           setTimeout(() => {
             wishlistButton.style.transform = 'scale(1)';
           }, 200);
+        } else {
+          console.error('Product not found for ID:', productId, 'Available products:', products);
         }
       }
     });
+  } else if (!productGrid) {
+    console.warn('productGrid not found when trying to initialize buttons');
   }
 }
 
