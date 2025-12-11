@@ -35,6 +35,15 @@
       "image": "/assets/uploads/img_3045.jpeg",
       "description": "One earning\nOne pendant\nFlower claw clip\nMunch\nSrunvhie\nLight key chain",
       "category": "hampers"
+    },
+    {
+      "category": "jewels",
+      "featured": false,
+      "id": 999,
+      "name": "Jewel",
+      "price": 1000,
+      "image": "/assets/uploads/v742lscv89z41.webp",
+      "description": "trsdckjgvh"
     }
   ]
 }
