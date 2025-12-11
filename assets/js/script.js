@@ -167,84 +167,105 @@ let productList = [];
 // Flag to ensure event listener is only added once
 let buttonsInitialized = false;
 
+// Handle enquire button click
+function handleEnquireClick(enquireButton) {
+  const productName = enquireButton.getAttribute('data-product-name');
+  const productId = enquireButton.getAttribute('data-product-id');
+  
+  // Format message
+  let message = `Hi! I would like to enquire about: ${productName}`;
+  
+  // Get product details if available
+  if (typeof window.getProducts === 'function') {
+    const allProducts = window.getProducts();
+    const product = allProducts.find(p => p.id == productId);
+    if (product) {
+      message = `Hi! I would like to enquire about:\n\n${product.name} - ₹${product.price.toFixed(2)}\n\nPlease let me know about availability and delivery options.`;
+    }
+  }
+  
+  // Format Instagram URL
+  const instagramUsername = 'saaheli.in';
+  const instagramUrl = `https://www.instagram.com/${instagramUsername}/`;
+  
+  // Copy message to clipboard
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(message).then(() => {
+      showNotification('Message copied! Opening Instagram...');
+      setTimeout(() => {
+        window.open(instagramUrl, '_blank');
+      }, 300);
+    }).catch(() => {
+      showNotification('Opening Instagram...');
+      window.open(instagramUrl, '_blank');
+    });
+  } else {
+    alert('Please copy this message and send it via Instagram DM:\n\n' + message);
+    window.open(instagramUrl, '_blank');
+  }
+  
+  // Add animation effect
+  enquireButton.style.transform = 'scale(0.9)';
+  setTimeout(() => {
+    enquireButton.style.transform = 'scale(1)';
+  }, 200);
+}
+
 // Initialize product buttons using event delegation (works with dynamically added elements)
 function initializeProductButtons() {
-  // Get fresh reference to productGrid
-  const productGrid = document.getElementById('productGrid');
+  // Get fresh references to both product grids
+  const hampersGrid = document.getElementById('hampersGrid');
+  const jewelsGrid = document.getElementById('jewelsGrid');
   
   // Get products from products.js
   if (typeof window.getProducts === 'function') {
     productList = window.getProducts();
   }
   
-  // Event delegation for enquire buttons - attach to productGrid container (only once)
-  if (productGrid && !buttonsInitialized) {
+  // Event delegation for enquire buttons - attach to both grids (only once)
+  if (!buttonsInitialized) {
     buttonsInitialized = true;
     console.log('Product buttons initialized');
     
-    // Handle all clicks within productGrid
-    productGrid.addEventListener('click', (e) => {
-      // Check if click is on enquire button
-      const enquireButton = e.target.closest('.btn-enquire');
-      if (enquireButton) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const productName = enquireButton.getAttribute('data-product-name');
-        const productId = enquireButton.getAttribute('data-product-id');
-        
-        // Format message
-        let message = `Hi! I would like to enquire about: ${productName}`;
-        
-        // Get product details if available
-        if (typeof window.getProducts === 'function') {
-          const allProducts = window.getProducts();
-          const product = allProducts.find(p => p.id == productId);
-          if (product) {
-            message = `Hi! I would like to enquire about:\n\n${product.name} - ₹${product.price.toFixed(2)}\n\nPlease let me know about availability and delivery options.`;
-          }
+    // Handle clicks in hampers grid
+    if (hampersGrid) {
+      hampersGrid.addEventListener('click', (e) => {
+        const enquireButton = e.target.closest('.btn-enquire');
+        if (enquireButton) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleEnquireClick(enquireButton);
         }
-        
-        // Format Instagram URL
-        const instagramUsername = 'saaheli.in';
-        const instagramUrl = `https://www.instagram.com/${instagramUsername}/`;
-        
-        // Copy message to clipboard
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(message).then(() => {
-            showNotification('Message copied! Opening Instagram...');
-            setTimeout(() => {
-              window.open(instagramUrl, '_blank');
-            }, 300);
-          }).catch(() => {
-            showNotification('Opening Instagram...');
-            window.open(instagramUrl, '_blank');
-          });
-        } else {
-          alert('Please copy this message and send it via Instagram DM:\n\n' + message);
-          window.open(instagramUrl, '_blank');
+      });
+    }
+    
+    // Handle clicks in jewels grid
+    if (jewelsGrid) {
+      jewelsGrid.addEventListener('click', (e) => {
+        const enquireButton = e.target.closest('.btn-enquire');
+        if (enquireButton) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleEnquireClick(enquireButton);
         }
-        
-        // Add animation effect
-        enquireButton.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-          enquireButton.style.transform = 'scale(1)';
-        }, 200);
-      }
-    });
-  } else if (!productGrid) {
-    console.warn('productGrid not found when trying to initialize buttons');
+      });
+    }
+  }
+  
+  if (!hampersGrid && !jewelsGrid) {
+    console.warn('Product grids not found when trying to initialize buttons');
   }
 }
 
 // Initialize button listeners - wait for products to be rendered
 function setupButtonListeners() {
-  // Make sure productGrid exists before initializing
-  const grid = document.getElementById('productGrid');
-  if (grid) {
+  // Make sure both grids exist before initializing
+  const hampersGrid = document.getElementById('hampersGrid');
+  const jewelsGrid = document.getElementById('jewelsGrid');
+  if (hampersGrid || jewelsGrid) {
     initializeProductButtons();
   } else {
-    // Retry after a short delay if productGrid doesn't exist yet (max 20 retries)
+    // Retry after a short delay if grids don't exist yet (max 20 retries)
     if (typeof setupButtonListeners.retryCount === 'undefined') {
       setupButtonListeners.retryCount = 0;
     }
@@ -422,15 +443,6 @@ cards.forEach(card => {
   });
 });
 
-// ===== PARALLAX EFFECT FOR HERO =====
-window.addEventListener('scroll', () => {
-  const scrolled = window.pageYOffset;
-  const heroMedia = document.querySelector('.hero-media');
-  
-  if (heroMedia && scrolled < window.innerHeight) {
-    heroMedia.style.transform = `translateY(${scrolled * 0.3}px)`;
-  }
-});
 
 // ===== LOADING ANIMATION =====
 window.addEventListener('load', () => {

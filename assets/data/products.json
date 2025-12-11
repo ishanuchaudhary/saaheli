@@ -6,7 +6,8 @@
       "name": "Hamper 2",
       "price": 1000,
       "image": "/assets/uploads/1000073656.webp",
-      "description": "Editable Description "
+      "description": "Editable Description ",
+      "category": "hampers"
     },
     {
       "featured": false,
@@ -14,7 +15,8 @@
       "name": "Hamper 1",
       "price": 500,
       "image": "/assets/uploads/shopping.png",
-      "description": "Editable Description"
+      "description": "Editable Description",
+      "category": "hampers"
     },
     {
       "featured": false,
@@ -22,7 +24,8 @@
       "name": "Hamper 3",
       "price": 2499,
       "image": "/assets/uploads/dottedi_high_tasters_hamper.png",
-      "description": "Special Anniversary Hamper"
+      "description": "Special Anniversary Hamper",
+      "category": "hampers"
     },
     {
       "featured": false,
@@ -30,7 +33,8 @@
       "name": "Mega hamper",
       "price": 500,
       "image": "/assets/uploads/img_3045.jpeg",
-      "description": "One earning\nOne pendant\nFlower claw clip\nMunch\nSrunvhie\nLight key chain"
+      "description": "One earning\nOne pendant\nFlower claw clip\nMunch\nSrunvhie\nLight key chain",
+      "category": "hampers"
     }
   ]
 }

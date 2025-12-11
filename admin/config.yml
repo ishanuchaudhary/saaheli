@@ -26,6 +26,16 @@ collections:
                 name: "name"
                 widget: "string"
                 required: true
+              - label: "Category"
+                name: "category"
+                widget: "select"
+                options:
+                  - label: "Hampers"
+                    value: "hampers"
+                  - label: "Jewels and Accessories"
+                    value: "jewels"
+                default: "hampers"
+                required: true
               - label: "Price"
                 name: "price"
                 widget: "number"

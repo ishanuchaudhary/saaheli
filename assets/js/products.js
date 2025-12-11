@@ -2,15 +2,17 @@
 
 // ===== PRODUCTS LOADING AND RENDERING =====
 let products = [];
-let productGrid = null;
+let hampersGrid = null;
+let jewelsGrid = null;
 
 // Fetch products from JSON file
 async function loadProducts() {
-  // Get productGrid when function is called (DOM should be ready)
-  productGrid = document.getElementById('productGrid');
+  // Get product grids when function is called (DOM should be ready)
+  hampersGrid = document.getElementById('hampersGrid');
+  jewelsGrid = document.getElementById('jewelsGrid');
   
-  if (!productGrid) {
-    console.error('Product grid not found');
+  if (!hampersGrid || !jewelsGrid) {
+    console.error('Product grids not found');
     return;
   }
   
@@ -28,32 +30,27 @@ async function loadProducts() {
   } catch (error) {
     console.error('Error loading products:', error);
     // Fallback to empty state or show error message
-    if (productGrid) {
-      productGrid.innerHTML = '<p style="text-align: center; padding: 40px; color: #5c4f49;">Unable to load products. Please try again later.</p>';
+    if (hampersGrid) {
+      hampersGrid.innerHTML = '<p style="text-align: center; padding: 40px; color: #5c4f49;">Unable to load products. Please try again later.</p>';
+    }
+    if (jewelsGrid) {
+      jewelsGrid.innerHTML = '<p style="text-align: center; padding: 40px; color: #5c4f49;">Unable to load products. Please try again later.</p>';
     }
   }
 }
 
-// Render products to the grid
-function renderProducts() {
-  if (!productGrid) return;
-  
-  if (products.length === 0) {
-    productGrid.innerHTML = '<p class="empty-message">No products available at the moment.</p>';
-    return;
+// Render a single product card
+function renderProductCard(product, index) {
+  // Normalize image path - handle both relative and absolute paths
+  let imagePath = product.image;
+  if (imagePath && !imagePath.startsWith('http') && !imagePath.startsWith('/')) {
+    // If path doesn't start with / or http, ensure it's relative
+    if (!imagePath.startsWith('./')) {
+      imagePath = './' + imagePath;
+    }
   }
   
-  productGrid.innerHTML = products.map((product, index) => {
-    // Normalize image path - handle both relative and absolute paths
-    let imagePath = product.image;
-    if (imagePath && !imagePath.startsWith('http') && !imagePath.startsWith('/')) {
-      // If path doesn't start with / or http, ensure it's relative
-      if (!imagePath.startsWith('./')) {
-        imagePath = './' + imagePath;
-      }
-    }
-    
-    return `
+  return `
     <article class="card fade-in-up" style="animation-delay: ${(index + 1) * 0.1}s">
       <div class="card-image-wrapper">
         <img src="${imagePath}" alt="${product.name}" class="card-img">
@@ -66,7 +63,6 @@ function renderProducts() {
           >
             Enquire?
           </button>
-
         </div>
       </div>
       <div class="card-content">
@@ -75,7 +71,31 @@ function renderProducts() {
       </div>
     </article>
   `;
-  }).join('');
+}
+
+// Render products to their respective grids based on category
+function renderProducts() {
+  // Filter products by category
+  const hampers = products.filter(p => p.category === 'hampers' || !p.category);
+  const jewels = products.filter(p => p.category === 'jewels');
+  
+  // Render hampers
+  if (hampersGrid) {
+    if (hampers.length === 0) {
+      hampersGrid.innerHTML = '<p class="empty-message">No hampers available at the moment.</p>';
+    } else {
+      hampersGrid.innerHTML = hampers.map((product, index) => renderProductCard(product, index)).join('');
+    }
+  }
+  
+  // Render jewels and accessories
+  if (jewelsGrid) {
+    if (jewels.length === 0) {
+      jewelsGrid.innerHTML = '<p class="empty-message">No jewels and accessories available at the moment.</p>';
+    } else {
+      jewelsGrid.innerHTML = jewels.map((product, index) => renderProductCard(product, index)).join('');
+    }
+  }
   
   // Re-initialize animations for newly rendered cards
   initializeCardAnimations();
@@ -101,8 +121,8 @@ function initializeCardAnimations() {
     });
   }, observerOptions);
 
-  // Observe all newly rendered cards
-  document.querySelectorAll('#productGrid .card').forEach(card => {
+  // Observe all newly rendered cards in both grids
+  document.querySelectorAll('#hampersGrid .card, #jewelsGrid .card').forEach(card => {
     observer.observe(card);
   });
 }
