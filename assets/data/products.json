@@ -12,10 +12,10 @@
     {
       "featured": false,
       "id": 1,
-      "name": "Hamper 1",
+      "name": "Pretty Treasure Box",
       "price": 500,
-      "image": "/assets/uploads/shopping.png",
-      "description": "Editable Description",
+      "image": "/assets/uploads/img_3045.jpeg",
+      "description": "",
       "category": "hampers"
     },
     {
