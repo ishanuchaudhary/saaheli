@@ -10,12 +10,12 @@
       "category": "hampers"
     },
     {
-      "featured": false,
+      "featured": true,
       "id": 1,
-      "name": "Hamper 1",
+      "name": "Pretty Treasure Box",
       "price": 500,
-      "image": "/assets/uploads/shopping.png",
-      "description": "Editable Description",
+      "image": "/assets/uploads/img_3045.jpeg",
+      "description": "The Pretty Treasure Box Includes:-\n1 Necklace (from silver stone heart pendant , bow pendant , white stone pendant , pink stone pendant, silver double heart pendant)\n\n1 Earning of our choice\n1big flower claw clip\n1 small flower claw clip\n1net cloud scrunchies\n1 astronaut light keychain\n1 chocolate\n\nCustomization is available but price will vary according to the product.",
       "category": "hampers"
     },
     {
@@ -35,6 +35,15 @@
       "image": "/assets/uploads/img_3045.jpeg",
       "description": "One earning\nOne pendant\nFlower claw clip\nMunch\nSrunvhie\nLight key chain",
       "category": "hampers"
+    },
+    {
+      "category": "jewels",
+      "featured": false,
+      "id": 999,
+      "name": "Jewel",
+      "price": 1000,
+      "image": "/assets/uploads/v742lscv89z41.webp",
+      "description": "trsdckjgvh"
     }
   ]
 }
