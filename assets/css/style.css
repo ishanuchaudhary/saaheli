@@ -439,7 +439,7 @@ button {
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
-.card:hover {
+.card:not(.card-expanded):hover {
   transform: translateY(-10px);
   box-shadow: var(--shadow-3);
   border-color: var(--color-secondary);
@@ -458,27 +458,17 @@ button {
   transition: transform var(--transition-3);
 }
 
-.card:hover .card-img {
+.card:not(.card-expanded):hover .card-img {
   transform: scale(1.1);
 }
 
-.card-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(94, 19, 23, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  opacity: 0;
-  transition: opacity var(--transition-2);
+.card {
+  cursor: pointer;
 }
 
-.card:hover .card-overlay {
-  opacity: 1;
+.card.card-expanded {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-3);
 }
 
 .btn-enquire {
@@ -495,17 +485,28 @@ button {
   transition: all var(--transition-1);
   border: 2px solid var(--color-secondary);
   cursor: pointer;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s, background var(--transition-1), border-color var(--transition-1);
+}
+
+.card.card-expanded .btn-enquire {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .btn-enquire:hover {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  transform: scale(1.05);
+  transform: scale(1.02);
   color: var(--color-primary);
 }
 
 .card-content {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-title {
@@ -516,14 +517,49 @@ button {
   transition: color var(--transition-1);
 }
 
-.card:hover .card-title {
+.card:not(.card-expanded):hover .card-title {
   color: var(--color-accent);
+}
+
+.card-expandable {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+  padding: 0 0;
+}
+
+.card.card-expanded .card-expandable {
+  max-height: 500px;
+  padding: 15px 0 0 0;
+}
+
+.card-description-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-description {
+  margin: 0;
+  font-size: var(--fs-8);
+  color: var(--spanish-gray);
+  line-height: 1.6;
+  font-weight: var(--fw-400);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+}
+
+.card.card-expanded .card-description {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .price {
   color: var(--color-accent);
   font-weight: var(--fw-700);
   font-size: var(--fs-5);
+  margin-top: auto;
 }
 
 /* ------ ABOUT ------ */
@@ -1118,6 +1154,24 @@ button {
 
   .card-content {
     padding: 15px;
+  }
+
+  .card-expandable {
+    max-height: 400px;
+  }
+
+  .card-description {
+    font-size: var(--fs-9);
+    margin-bottom: 12px;
+  }
+
+  .card-description-wrapper {
+    gap: 12px;
+  }
+
+  .btn-enquire {
+    padding: 10px 20px;
+    font-size: var(--fs-8);
   }
 
   .card-overlay {

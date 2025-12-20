@@ -169,6 +169,7 @@ let buttonsInitialized = false;
 
 // Handle enquire button click
 function handleEnquireClick(enquireButton) {
+  if (!enquireButton) return;
   const productName = enquireButton.getAttribute('data-product-name');
   const productId = enquireButton.getAttribute('data-product-id');
   
@@ -210,6 +211,9 @@ function handleEnquireClick(enquireButton) {
     enquireButton.style.transform = 'scale(1)';
   }, 200);
 }
+
+// Expose function globally for use in products.js
+window.handleEnquireClick = handleEnquireClick;
 
 // Initialize product buttons using event delegation (works with dynamically added elements)
 function initializeProductButtons() {
@@ -275,6 +279,9 @@ function setupButtonListeners() {
     }
   }
 }
+
+// Expose function globally for use in products.js
+window.setupButtonListeners = setupButtonListeners;
 
 // Wait for products to be loaded and rendered before setting up listeners
 function waitForProducts() {

@@ -50,24 +50,34 @@ function renderProductCard(product, index) {
     }
   }
   
+  // Format description - replace newlines with line breaks
+  const description = product.description 
+    ? product.description.replace(/\n/g, '<br>') 
+    : '';
+  
   return `
-    <article class="card fade-in-up" style="animation-delay: ${(index + 1) * 0.1}s">
+    <article class="card fade-in-up" style="animation-delay: ${(index + 1) * 0.1}s" data-product-id="${product.id}">
       <div class="card-image-wrapper">
         <img src="${imagePath}" alt="${product.name}" class="card-img">
-        <div class="card-overlay">
-          <button
-            class="btn-enquire"
-            aria-label="Enquire about this product"
-            data-product-id="${product.id}"
-            data-product-name="${product.name}"
-          >
-            Enquire?
-          </button>
-        </div>
       </div>
       <div class="card-content">
         <h3 class="card-title">${product.name}</h3>
         <p class="price">₹${product.price.toFixed(2)}</p>
+        ${description ? `
+        <div class="card-expandable">
+          <div class="card-description-wrapper">
+            <p class="card-description">${description}</p>
+            <button
+              class="btn-enquire"
+              aria-label="Enquire about this product"
+              data-product-id="${product.id}"
+              data-product-name="${product.name}"
+            >
+              Enquire?
+            </button>
+          </div>
+        </div>
+        ` : ''}
       </div>
     </article>
   `;
@@ -100,8 +110,17 @@ function renderProducts() {
   // Re-initialize animations for newly rendered cards
   initializeCardAnimations();
   
+  // Initialize card expand/collapse functionality
+  initializeCardExpansion();
+  
   // Dispatch event that products have been rendered
   window.dispatchEvent(new CustomEvent('productsRendered'));
+  
+  // Re-initialize enquiry buttons after products are rendered
+  // This ensures buttons work even if they're inside expandable sections
+  if (typeof window.setupButtonListeners === 'function') {
+    window.setupButtonListeners();
+  }
 }
 
 // Initialize card animations
@@ -124,6 +143,46 @@ function initializeCardAnimations() {
   // Observe all newly rendered cards in both grids
   document.querySelectorAll('#hampersGrid .card, #jewelsGrid .card').forEach(card => {
     observer.observe(card);
+  });
+}
+
+// Initialize card expand/collapse functionality
+function initializeCardExpansion() {
+  // Get all cards with expandable content
+  const cards = document.querySelectorAll('#hampersGrid .card, #jewelsGrid .card');
+  
+  cards.forEach(card => {
+    // Only add listener if card has expandable content
+    const expandable = card.querySelector('.card-expandable');
+    if (!expandable) return;
+    
+    // Add click event listener to card
+    card.addEventListener('click', (e) => {
+      // Check if clicking on the enquiry button
+      const enquireButton = e.target.closest('.btn-enquire');
+      if (enquireButton) {
+        // Expand the card first if it's not expanded
+        if (!card.classList.contains('card-expanded')) {
+          card.classList.add('card-expanded');
+          // Wait a bit for animation, then trigger enquiry
+          setTimeout(() => {
+            if (typeof window.handleEnquireClick === 'function') {
+              window.handleEnquireClick(enquireButton);
+            }
+          }, 100);
+        } else {
+          // Card is already expanded, trigger enquiry directly
+          if (typeof window.handleEnquireClick === 'function') {
+            window.handleEnquireClick(enquireButton);
+          }
+        }
+        e.stopPropagation(); // Prevent card toggle
+        return;
+      }
+      
+      // Toggle expanded class for other clicks
+      card.classList.toggle('card-expanded');
+    });
   });
 }
 
