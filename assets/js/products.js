@@ -163,6 +163,8 @@ function initializeCardExpansion() {
       if (enquireButton) {
         // Expand the card first if it's not expanded
         if (!card.classList.contains('card-expanded')) {
+          // Collapse all other cards first
+          collapseAllCards(card);
           card.classList.add('card-expanded');
           // Wait a bit for animation, then trigger enquiry
           setTimeout(() => {
@@ -180,9 +182,27 @@ function initializeCardExpansion() {
         return;
       }
       
-      // Toggle expanded class for other clicks
-      card.classList.toggle('card-expanded');
+      // Check if card is already expanded
+      const isExpanded = card.classList.contains('card-expanded');
+      
+      // Collapse all cards first
+      collapseAllCards();
+      
+      // If the clicked card wasn't expanded, expand it now
+      if (!isExpanded) {
+        card.classList.add('card-expanded');
+      }
     });
+  });
+}
+
+// Helper function to collapse all cards except the one passed as parameter
+function collapseAllCards(exceptCard = null) {
+  const allCards = document.querySelectorAll('#hampersGrid .card, #jewelsGrid .card');
+  allCards.forEach(card => {
+    if (card !== exceptCard) {
+      card.classList.remove('card-expanded');
+    }
   });
 }
 
