@@ -3,10 +3,10 @@
     {
       "featured": false,
       "id": 2,
-      "name": "Hamper 2",
-      "price": 1000,
-      "image": "/assets/uploads/v742lscv89z41.webp",
-      "description": "Sample description",
+      "name": "Mini charm box",
+      "price": 150,
+      "image": "/assets/uploads/img_3011-1-.heic",
+      "description": "includes\n",
       "category": "hampers"
     },
     {
@@ -21,10 +21,10 @@
     {
       "featured": false,
       "id": 3,
-      "name": "Hamper 3",
-      "price": 2499,
-      "image": "/assets/uploads/dottedi_high_tasters_hamper.png",
-      "description": "Special Anniversary Hamper",
+      "name": "sweetheart hamper",
+      "price": 299,
+      "image": "/assets/uploads/img_3029.heic",
+      "description": "",
       "category": "hampers"
     },
     {
@@ -44,6 +44,30 @@
       "price": 1000,
       "image": "/assets/uploads/v742lscv89z41.webp",
       "description": "trsdckjgvh"
+    },
+    {
+      "category": "jewels",
+      "featured": false,
+      "id": 1,
+      "name": "srunchies",
+      "price": 50,
+      "image": "/assets/uploads/cvsp2256.jpg"
+    },
+    {
+      "category": "jewels",
+      "featured": false,
+      "id": 1,
+      "name": "anti tarnish white stone pendant",
+      "price": 200,
+      "image": "/assets/uploads/whatsapp-image-2026-01-02-at-7.23.42-pm.jpeg"
+    },
+    {
+      "category": "jewels",
+      "featured": false,
+      "id": 3,
+      "name": "anti tarish double heart pendant",
+      "price": 179,
+      "image": "/assets/uploads/whatsapp-image-2026-01-02-at-7.33.47-pm.jpeg"
     }
   ]
 }
